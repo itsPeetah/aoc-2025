@@ -25,22 +25,12 @@ def merge_ranges(range_a: tuple[int], range_b: tuple[int]) -> tuple[tuple[int], 
 
 
 def collapse_range_list(ranges: list[tuple[int]]) -> list[tuple[int]]:
-    rs = [r for r in ranges]
-    curr_size = len(rs)
-    while True:
-        for a in range(curr_size - 1, -1, -1):
-            ra = rs[a]
-            for b in range(a - 1, -1, -1):
-                rb = rs[b]
-                new_r, merged = merge_ranges(ra, rb)
-                if merged:
-                    rs.pop(a)
-                    rs[b] = new_r
-                    break
-        last_size = curr_size
-        curr_size = len(rs)
-        if last_size == curr_size:
-            break
+    rs = sorted([r for r in ranges], key=lambda interval: interval[1])
+    for i in range(len(rs) - 1, 0, -1):
+        new_r, merged = merge_ranges(rs[i], rs[i - 1])
+        if merged:
+            rs[i - 1] = new_r
+            rs.pop(i)
     return rs
 
 
@@ -63,6 +53,7 @@ def part2(ranges: list[tuple[int]]):
 
 
 ranges, ids = parse("input/day5.txt")
+print("Fresh ids (part 1):", part1(ranges, ids))
 ranges = collapse_range_list(ranges)
 print("Fresh ids (part 1):", part1(ranges, ids))
 print("Total fresh ids (part 2):", part2(ranges))
