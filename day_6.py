@@ -1,6 +1,3 @@
-import re
-
-
 def parse(path: str) -> list[tuple]:
     data = []
     with open(path) as file:
