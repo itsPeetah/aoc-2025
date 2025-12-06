@@ -1,33 +1,58 @@
 import re
 
 
-def parse(path: str):
+def parse(path: str) -> list[tuple]:
+    data = []
     with open(path) as file:
-        txt = re.sub(r" +", " ", file.read())
-    return [
-        [c if c in ("*", "+") else int(c) for c in line]
-        for line in [line.strip().split(" ") for line in txt.split("\n")]
-    ]
+        *lines, operators = [line for line in file.read().split("\n")]
+    i = 0
+    l = len(operators)
+    while i < l:
+        c = operators[i]
+        if c != " ":
+            op = c
+            nums = []
+            j = i + 1
+            while j < l and operators[j] == " ":
+                j += 1
+            splitpoint = j - 1 if j < l else j
+            for line in lines:
+                nums.append(line[i:splitpoint])
+        data.append((op, nums))
+        i = j
+    return data
 
 
-def part1(data: list[list]):
-    def add(a, b):
-        return a + b
-
-    def mul(a, b):
-        return a * b
+def part1(data: list[tuple]) -> int:
 
     cum_sum = 0
-    for x in range(len(data[0])):
-        op = add if data[-1][x] == "+" else mul
-        res = data[0][x]
-        for y in range(1, len(data) - 1):
-            res = op(res, data[y][x])
+    for op, nums in data:
+        res = int(nums[0])
+        for i in range(1, len(nums)):
+            res = (int.__add__ if op == "+" else int.__mul__)(res, int(nums[i]))
         cum_sum += res
     return cum_sum
 
 
+def part2(data: list[tuple]) -> int:
+    def rotate_num_matrix(nums: list[str]) -> list[str]:
+        rotated = []
+        for x in range(len(nums[0]) - 1, -1, -1):
+            num = ""
+            for y in range(len(nums)):
+                num += nums[y][x]
+            rotated.append(num)
+        return rotated
+
+    new_data = []
+    for op, nums in data:
+        new_data.append((op, rotate_num_matrix(nums)))
+    return part1(new_data)
+
+
 data = parse("input/day6.txt")
 p1 = part1(data)
+p2 = part2(data)
 
 print("Grand total for part 1:", p1)
+print("Grand total for part 2:", p2)
