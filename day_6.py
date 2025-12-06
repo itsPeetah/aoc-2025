@@ -26,7 +26,9 @@ def part1(data: list[tuple]) -> int:
     for op, nums in data:
         res = int(nums[0])
         for i in range(1, len(nums)):
-            res = (int.__add__ if op == "+" else int.__mul__)(res, int(nums[i]))
+            res = ((lambda a, b: a + b) if op == "+" else (lambda a, b: a * b))(
+                res, int(nums[i])
+            )
         cum_sum += res
     return cum_sum
 
