@@ -50,26 +50,6 @@ def advance_beams(current_line_index: int, world: list[list[int]]) -> int:
     return splits_counter
 
 
-"""
-    splits_counter = 0
-    previous_line = world[current_line_index - 1]
-    current_line = world[current_line_index]
-    for i in range(len(current_line)):
-        p = previous_line[i]
-        if p == TILE_START:
-            current_line[i] = TILE_BEAM
-        elif p > 0:
-            if current_line[i] == TILE_SPLITTER:
-                splits_counter += 1
-                current_line[i - 1] += previous_line[i]
-                current_line[i + 1] += previous_line[i]
-            elif current_line[i] == TILE_VOID or current_line[i] >= TILE_BEAM:
-                current_line[i] += previous_line[i]
-
-    return splits_counter
-"""
-
-
 def part1(world: list[list[int]]):
     cum_sum = 0
     for i in range(1, len(world)):
@@ -88,6 +68,7 @@ def part2(world: list[list[int]]) -> int:
 text_input = get_text_input(7, False)
 world = parse(text_input)
 p1 = part1(world)
+# Re-parse because the input data is changed by the function
 world = parse(text_input)
 p2 = part2(world)
 
