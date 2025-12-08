@@ -33,14 +33,10 @@ def part1(graph: tuple[list, dict], max_connections=1000):
                 return -1, False, False
             return circi, True, True
         elif conni:
-            # circuit_labels[j] = (circi, True)
             return circi, True, False
         elif connj:
-            # circuit_labels[i] = (circj, True)
             return circj, True, False
         else:
-            # circuit_labels[i] = (circi, True)
-            # circuit_labels[j] = (circi, True)
             return circi, True, False
 
     def connect_closest(iteration: int) -> bool:
@@ -52,7 +48,6 @@ def part1(graph: tuple[list, dict], max_connections=1000):
             circuit_labels[close_i] = (label, True)
             circuit_labels[close_j] = (label, True)
         if should_propagate:
-            print("propagating", label, "to", prev_j)
             for k in range(len(circuit_labels)):
                 if circuit_labels[k][0] == prev_j:
                     circuit_labels[k] = (label, True)
@@ -80,9 +75,75 @@ def part1(graph: tuple[list, dict], max_connections=1000):
     return res
 
 
+def part2(graph: tuple[list, dict]):
+    l_nodes, w_edges = graph
+    circuit_labels = [(label, False) for label, _ in l_nodes]
+    closest_pairs = sorted(w_edges.keys(), key=lambda k: w_edges[k])
+    circuit_sizes = {label: 1 for label, _ in circuit_labels}
+
+    def decide_cirtcuit(i: int, j: int) -> tuple[int, bool, bool]:
+        circi, conni = circuit_labels[i]
+        circj, connj = circuit_labels[j]
+        if conni and connj:
+            if circi == circj:
+                return -1, False, False
+            return circi, True, True
+        elif conni:
+            # circuit_labels[j] = (circi, True)
+            return circi, True, False
+        elif connj:
+            # circuit_labels[i] = (circj, True)
+            return circj, True, False
+        else:
+            # circuit_labels[i] = (circi, True)
+            # circuit_labels[j] = (circi, True)
+            return circi, True, False
+
+    def connect_closest(iteration: int) -> tuple[bool, int, int]:
+        close_i, close_j = closest_pairs[iteration]
+
+        prev_i = circuit_labels[close_i][0]
+        prev_j = circuit_labels[close_j][0]
+        label, should_connect, should_propagate = decide_cirtcuit(close_i, close_j)
+        if should_connect:
+            circuit_labels[close_i] = (label, True)
+            circuit_labels[close_j] = (label, True)
+            circuit_sizes[label] += 2
+            circuit_sizes[prev_i] -= 1
+            circuit_sizes[prev_j] -= 1
+        if should_propagate:
+            circuit_sizes[label] += circuit_sizes[prev_j]
+            circuit_sizes[prev_j] = 0
+            for k in range(len(circuit_labels)):
+                if circuit_labels[k][0] == prev_j:
+                    circuit_labels[k] = (label, True)
+
+        return (
+            label >= 0 and circuit_sizes[label] >= len(l_nodes),
+            close_i,
+            close_j,
+        )
+
+    iteration = 0
+    max_size_reached = False
+    last_node_i = -1
+    last_node_j = -1
+    while iteration < len(w_edges):
+        max_size_reached, last_node_i, last_node_j = connect_closest(iteration)
+        iteration += 1
+        if max_size_reached:
+            break
+
+    pos_i = l_nodes[last_node_i][1]
+    pos_j = l_nodes[last_node_j][1]
+    return pos_i[0] * pos_j[0]
+
+
 parsed = parse("input/day8.txt")
 graph = make_graph(parsed)
-p1 = part1(graph, 10)
+p1 = part1(graph, 1000)
+p2 = part2(graph)
 
 print("Part 1:", p1)
+print("Part 2:", p2)
 # 1200 too low
