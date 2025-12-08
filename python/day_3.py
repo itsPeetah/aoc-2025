@@ -1,8 +1,10 @@
-def parse(path: str) -> list[int]:
+from helpers import get_text_input
+
+
+def parse(text: str) -> list[int]:
     res = []
-    with open(path) as file:
-        for line in file:
-            res.append([int(j) for j in line.strip()])
+    for line in text.split("\n"):
+        res.append([int(j) for j in line.strip()])
     return res
 
 
@@ -28,6 +30,10 @@ def calculate_joltage(num_batteries: int, banks: list[int]) -> int:
     return sum([calculate_bank_joltage(bank, num_batteries) for bank in banks])
 
 
-banks = parse("input/day3.txt")
-print("Total output joltage for part 1:", calculate_joltage(2, banks))
-print("Total output joltage for part 2:", calculate_joltage(12, banks))
+text_input = get_text_input(3, False)
+banks = parse(text_input)
+p1 = calculate_joltage(2, banks)
+p2 = calculate_joltage(12, banks)
+
+print("Total output joltage for part 1:", p1)
+print("Total output joltage for part 2:", p2)

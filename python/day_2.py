@@ -1,11 +1,11 @@
+from helpers import get_text_input
 import re
 
 
-def parse():
+def parse(text: str):
     res = []
-    with open("input/day2.txt") as file:
-        ranges = [r.split("-") for r in file.read().strip().split(",")]
-        res.extend([(int(r[0]), int(r[1])) for r in ranges])
+    ranges = [r.split("-") for r in text.strip().split(",")]
+    res.extend([(int(r[0]), int(r[1])) for r in ranges])
     return res
 
 
@@ -25,9 +25,8 @@ def repeated_multiple(number: int) -> bool:
 
 # again I'm doing the idiot solution because I'm in uni and
 # I need to make my thesis presentation for the 10th lol
-def part1():
+def part1(ranges):
     cum_sum = 0
-    ranges = parse()
     for a, b in ranges:
         for x in range(a, b + 1):
             if repeated_twice(x):
@@ -35,9 +34,8 @@ def part1():
     return cum_sum
 
 
-def part2():
+def part2(ranges):
     cum_sum = 0
-    ranges = parse()
     for a, b in ranges:
         for x in range(a, b + 1):
             if repeated_multiple(x):
@@ -45,5 +43,10 @@ def part2():
     return cum_sum
 
 
-print("The sum for part 1 is:", part1())
-print("The sum for part 2 is:", part2())
+text_input = get_text_input(2, False)
+ranges = parse(text_input)
+p1 = part1(ranges)
+p2 = part2(ranges)
+
+print("The sum for part 1 is:", p1)
+print("The sum for part 2 is:", p2)

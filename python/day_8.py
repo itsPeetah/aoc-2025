@@ -1,6 +1,8 @@
-def parse(path: str) -> list[tuple[int]]:
-    with open(path) as file:
-        return [tuple(map(int, line.strip().split(","))) for line in file]
+from helpers import get_text_input
+
+
+def parse(text: str) -> list[tuple[int]]:
+    return [tuple(map(int, line.strip().split(","))) for line in text.split("\n")]
 
 
 def distance(p0: tuple[int, int, int], p1: tuple[int, int, int]) -> float:
@@ -134,7 +136,8 @@ def part2(graph: tuple[list, dict]):
     return pos_i[0] * pos_j[0]
 
 
-parsed = parse("input/day8.txt")
+text_input = get_text_input(8, False)
+parsed = parse(text_input)
 graph = make_graph(parsed)
 p1 = part1(graph, 1000)
 p2 = part2(graph)

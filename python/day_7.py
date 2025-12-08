@@ -1,10 +1,13 @@
+from helpers import get_text_input
+
+
 TILE_START = -1
 TILE_SPLITTER = -2
 TILE_VOID = 0
 TILE_BEAM = 1
 
 
-def parse(path: str) -> list[list[int]]:
+def parse(text: str) -> list[list[int]]:
     def map_character(char: str) -> int:
         match char:
             case "S":
@@ -15,9 +18,9 @@ def parse(path: str) -> list[list[int]]:
                 return TILE_VOID
 
     world = []
-    with open(path) as file:
-        for line in file:
-            world.append([map_character(c) for c in line.strip()])
+
+    for line in text.split("\n"):
+        world.append([map_character(c) for c in line])
     return world
 
 
@@ -39,10 +42,32 @@ def advance_beams(current_line_index: int, world: list[list[int]]) -> int:
                 current_line[i - 1] += above
                 current_line[i + 1] += above
                 splits_counter += 1  # increase split counter for every split
-            elif current_line[i] >= TILE_VOID:  # if void or beam
+            elif (current_line[i] == TILE_VOID) or (
+                current_line[i] >= TILE_BEAM
+            ):  # if void or beam
                 current_line[i] += above  # extend the void or the beam above
 
     return splits_counter
+
+
+"""
+    splits_counter = 0
+    previous_line = world[current_line_index - 1]
+    current_line = world[current_line_index]
+    for i in range(len(current_line)):
+        p = previous_line[i]
+        if p == TILE_START:
+            current_line[i] = TILE_BEAM
+        elif p > 0:
+            if current_line[i] == TILE_SPLITTER:
+                splits_counter += 1
+                current_line[i - 1] += previous_line[i]
+                current_line[i + 1] += previous_line[i]
+            elif current_line[i] == TILE_VOID or current_line[i] >= TILE_BEAM:
+                current_line[i] += previous_line[i]
+
+    return splits_counter
+"""
 
 
 def part1(world: list[list[int]]):
@@ -60,7 +85,11 @@ def part2(world: list[list[int]]) -> int:
     )  # the number of timelines is the sum of the beam value on the last row
 
 
-p1 = part1(parse("input/day7.txt"))
-p2 = part2(parse("input/day7.txt"))
+text_input = get_text_input(7, False)
+world = parse(text_input)
+p1 = part1(world)
+world = parse(text_input)
+p2 = part2(world)
+
 print("Total splits for part 1:", p1)
 print("Total timelines for part 2:", p2)

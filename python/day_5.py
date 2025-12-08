@@ -1,13 +1,15 @@
-def parse(path: str) -> tuple[list[tuple[int]], list[int]]:
+from helpers import get_text_input
+
+
+def parse(text: str) -> tuple[list[tuple[int]], list[int]]:
     ranges = []
     ids = []
-    with open(path) as file:
-        ranges_txt, ids_txt = file.read().split("\n\n")
-        for range_line in ranges_txt.strip().split("\n"):
-            a, b = tuple(map(int, range_line.split("-")))
-            ranges.append((a, b))
-        for id in ids_txt.strip().split("\n"):
-            ids.append(int(id))
+    ranges_txt, ids_txt = text.split("\n\n")
+    for range_line in ranges_txt.strip().split("\n"):
+        a, b = tuple(map(int, range_line.split("-")))
+        ranges.append((a, b))
+    for id in ids_txt.strip().split("\n"):
+        ids.append(int(id))
     return ranges, ids
 
 
@@ -52,8 +54,14 @@ def part2(ranges: list[tuple[int]]):
     return cum_sum
 
 
-ranges, ids = parse("input/day5.txt")
-print("Fresh ids (part 1):", part1(ranges, ids))
+text_input = get_text_input(5, False)
+ranges, ids = parse(text_input)
+p1 = part1(ranges, ids)
+
+print("Fresh ids (part 1):", p1)
 ranges = collapse_range_list(ranges)
-print("Fresh ids (part 1):", part1(ranges, ids))
-print("Total fresh ids (part 2):", part2(ranges))
+p1 = part1(ranges, ids)
+p2 = part2(ranges)
+
+print("Fresh ids (part 1):", p1)
+print("Total fresh ids (part 2):", p2)

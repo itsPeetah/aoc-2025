@@ -1,7 +1,9 @@
-def parse(path: str) -> list[tuple]:
+from helpers import get_text_input
+
+
+def parse(text: str) -> list[tuple]:
     data = []
-    with open(path) as file:
-        *lines, operators = [line for line in file.read().split("\n")]
+    *lines, operators = [line for line in text.split("\n")]
     i = 0
     l = len(operators)
     while i < l:
@@ -49,7 +51,8 @@ def part2(data: list[tuple]) -> int:
     return part1(new_data)
 
 
-data = parse("input/day6.txt")
+text_input = get_text_input(6, False)
+data = parse(text_input)
 p1 = part1(data)
 p2 = part2(data)
 

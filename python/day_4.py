@@ -1,11 +1,13 @@
-def parse(path: str) -> tuple[list[int], int]:
+from helpers import get_text_input
+
+
+def parse(text: str) -> tuple[list[int], int]:
     line_length = 0
     paper_rolls = []
-    with open(path) as file:
-        for line in file:
-            line = line.strip()
-            line_length = len(line)
-            paper_rolls.extend([0 if c == "." else 1 for c in line])
+
+    for line in text.split("\n"):
+        line_length = len(line)
+        paper_rolls.extend([0 if c == "." else 1 for c in line])
     return paper_rolls, line_length
 
 
@@ -58,14 +60,16 @@ def find_and_remove_accessible_rolls(
     return cum_sum
 
 
-rolls, row_len = parse("input/day4.txt")
-
+text_input = get_text_input(4, False)
+rolls, row_len = parse(text_input)
+p1 = find_and_remove_accessible_rolls(rolls, row_len, 1)
+p2 = find_and_remove_accessible_rolls(rolls, row_len, -1)
 print(
     "Accessible rolls for part 1:",
-    find_and_remove_accessible_rolls(rolls, row_len, 1),
+    p1,
 )
 
 print(
     "Accessible rolls for part 2:",
-    find_and_remove_accessible_rolls(rolls, row_len, -1),
+    p2,
 )
